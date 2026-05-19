@@ -5,7 +5,7 @@ Webapp interactive pour une agence fictive de voyage temporel : Paris 1889, Cret
 ## Lancer le projet
 
 ```bash
-cd /Users/arthurcapo/Desktop/TravelAgency
+cd /Users/julescavanier/Desktop/TravelAgency
 cp .env.example .env
 # Ajouter la cle OpenRouter dans .env pour activer le chatbot IA
 npm start
@@ -39,6 +39,32 @@ OPENROUTER_MODEL=openrouter/auto
 OPENROUTER_SITE_URL=http://localhost:3000
 OPENROUTER_APP_NAME=Chronos TimeTravel Agency
 PORT=3000
+CHAT_RATE_LIMIT=10
+CHAT_RATE_WINDOW_MS=60000
+```
+
+## Deploiement Vercel
+
+Le projet est compatible avec Vercel comme site statique avec une API serverless dans `api/chat.js`.
+
+Avant de deployer, verifier que les variables suivantes sont configurees dans Vercel :
+
+```bash
+OPENROUTER_API_KEY=...
+OPENROUTER_MODEL=openrouter/auto
+OPENROUTER_SITE_URL=https://ton-site.vercel.app
+OPENROUTER_APP_NAME=Chronos TimeTravel Agency
+CHAT_RATE_LIMIT=10
+CHAT_RATE_WINDOW_MS=60000
+```
+
+Les fichiers lourds non utilises par l'interface sont exclus du deploiement via `.vercelignore` pour rester compatible avec les limites pratiques de Vercel Hobby.
+
+Commandes de deploiement :
+
+```bash
+vercel
+vercel --prod
 ```
 
 ## Moodle
