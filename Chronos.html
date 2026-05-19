@@ -1,0 +1,979 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Chronos — Private Time Travel</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Chronos — a private temporal travel atelier. Seventeen calibrated voyages across four millennia.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300&family=Space+Grotesk:wght@300;400;500;600&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet">
+<script crossorigin src="https://unpkg.com/react@18.3.1/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js"></script>
+<style>
+:root {
+  --void: #05060a;
+  --void-2: #0a0c12;
+  --ink: #e9e6df;
+  --ink-dim: rgba(233,230,223,0.62);
+  --ink-faint: rgba(233,230,223,0.34);
+  --hair: rgba(233,230,223,0.10);
+  --hair-strong: rgba(233,230,223,0.22);
+  --gold: oklch(0.82 0.09 80);
+  --gold-soft: oklch(0.82 0.09 80 / 0.18);
+  --ice: oklch(0.86 0.07 220);
+  --ember: oklch(0.68 0.14 35);
+  --serif: 'Cormorant Garamond', 'EB Garamond', serif;
+  --sans: 'Space Grotesk', system-ui, sans-serif;
+  --mono: 'JetBrains Mono', ui-monospace, monospace;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { background: var(--void); color: var(--ink); font-family: var(--sans); -webkit-font-smoothing: antialiased; }
+body {
+  background:
+    radial-gradient(ellipse at 50% -20%, rgba(120,90,40,0.18), transparent 55%),
+    radial-gradient(ellipse at 80% 110%, rgba(40,80,140,0.14), transparent 50%),
+    var(--void);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+body::after {
+  content: "";
+  position: fixed; inset: 0; pointer-events: none; z-index: 100;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.5 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/></svg>");
+  opacity: 0.06; mix-blend-mode: overlay;
+}
+
+.nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+  padding: 22px 48px;
+  display: flex; align-items: center; justify-content: space-between;
+  font-family: var(--sans); font-size: 12px; letter-spacing: 0.18em;
+  background: linear-gradient(180deg, rgba(5,6,10,0.7), transparent);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+.nav-logo { display: flex; align-items: center; gap: 12px; }
+.nav-logo .mark {
+  width: 28px; height: 28px; border: 1px solid var(--gold); border-radius: 50%;
+  position: relative; display: grid; place-items: center;
+}
+.nav-logo .mark::before {
+  content: ""; width: 2px; height: 10px; background: var(--gold);
+  position: absolute; top: 50%; left: 50%;
+  transform-origin: top center; transform: translate(-50%, 0) rotate(38deg);
+  animation: hand 18s linear infinite;
+}
+.nav-logo .mark::after {
+  content: ""; width: 2px; height: 7px; background: var(--gold);
+  position: absolute; top: 50%; left: 50%;
+  transform-origin: top center; transform: translate(-50%, 0) rotate(-110deg);
+  animation: hand 60s linear infinite;
+}
+@keyframes hand { to { transform: translate(-50%, 0) rotate(360deg); } }
+.nav-logo .wordmark { font-family: var(--serif); font-size: 22px; letter-spacing: 0.32em; font-weight: 400; }
+.nav-links { display: flex; gap: 36px; color: var(--ink-dim); text-transform: uppercase; }
+.nav-links a { color: inherit; text-decoration: none; transition: color 0.3s; cursor: pointer; }
+.nav-links a:hover { color: var(--gold); }
+.nav-cta {
+  border: 1px solid var(--hair-strong); padding: 10px 18px; border-radius: 999px;
+  text-transform: uppercase; font-size: 11px; letter-spacing: 0.2em;
+  background: rgba(255,255,255,0.02); cursor: pointer; color: var(--ink);
+  transition: all 0.3s;
+}
+.nav-cta:hover { border-color: var(--gold); color: var(--gold); }
+
+.hero {
+  position: relative;
+  height: 100vh; min-height: 720px;
+  display: grid; place-items: center;
+  overflow: hidden;
+}
+#starfield {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  z-index: 0;
+}
+.hero-nebula {
+  position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  background:
+    radial-gradient(ellipse 70% 40% at 20% 80%, rgba(180,120,60,0.15), transparent 60%),
+    radial-gradient(ellipse 60% 50% at 85% 30%, rgba(50,100,180,0.12), transparent 60%),
+    radial-gradient(ellipse 80% 50% at 50% 100%, rgba(0,0,0,0.85), transparent 70%);
+}
+.hero-vignette {
+  position: absolute; inset: 0; z-index: 2; pointer-events: none;
+  background: radial-gradient(ellipse at center, transparent 40%, rgba(5,6,10,0.7) 100%);
+}
+.hero-inner {
+  position: relative; z-index: 3;
+  text-align: center; padding: 0 24px;
+  max-width: 1100px;
+}
+.hero-eyebrow {
+  font-family: var(--mono); font-size: 11px; letter-spacing: 0.4em;
+  color: var(--gold); text-transform: uppercase;
+  display: inline-flex; align-items: center; gap: 14px;
+  margin-bottom: 36px;
+  opacity: 0; animation: rise 1.4s 0.2s forwards;
+}
+.hero-eyebrow::before, .hero-eyebrow::after {
+  content: ""; width: 40px; height: 1px; background: var(--gold); opacity: 0.5;
+}
+.hero h1 {
+  font-family: var(--serif); font-weight: 300;
+  font-size: clamp(56px, 9vw, 140px);
+  line-height: 0.95; letter-spacing: -0.02em;
+  margin-bottom: 32px;
+  opacity: 0; animation: rise 1.6s 0.5s forwards;
+}
+.hero h1 em {
+  font-style: italic;
+  background: linear-gradient(180deg, var(--gold) 0%, oklch(0.65 0.12 50) 100%);
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+}
+.hero-sub {
+  font-family: var(--sans); font-weight: 300;
+  font-size: clamp(15px, 1.3vw, 19px); line-height: 1.6;
+  color: var(--ink-dim); max-width: 580px; margin: 0 auto 48px;
+  opacity: 0; animation: rise 1.6s 0.8s forwards;
+}
+.hero-actions {
+  display: flex; gap: 16px; justify-content: center;
+  opacity: 0; animation: rise 1.6s 1.1s forwards;
+}
+.btn-primary {
+  background: var(--gold); color: var(--void);
+  padding: 16px 32px; border: none; border-radius: 999px;
+  font-family: var(--sans); font-size: 12px; letter-spacing: 0.22em;
+  text-transform: uppercase; font-weight: 500; cursor: pointer;
+  display: inline-flex; align-items: center; gap: 10px;
+  transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+  position: relative; overflow: hidden;
+}
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 20px 60px -10px oklch(0.82 0.09 80 / 0.5); }
+.btn-primary::before {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(120deg, transparent, rgba(255,255,255,0.4), transparent);
+  transform: translateX(-100%); transition: transform 0.8s;
+}
+.btn-primary:hover::before { transform: translateX(100%); }
+.btn-ghost {
+  background: rgba(255,255,255,0.03); color: var(--ink);
+  padding: 16px 28px; border: 1px solid var(--hair-strong); border-radius: 999px;
+  font-family: var(--sans); font-size: 12px; letter-spacing: 0.22em;
+  text-transform: uppercase; font-weight: 400; cursor: pointer;
+  display: inline-flex; align-items: center; gap: 10px;
+  backdrop-filter: blur(20px); transition: all 0.4s;
+}
+.btn-ghost:hover { border-color: var(--gold); color: var(--gold); }
+
+.hero-meta {
+  position: absolute; bottom: 40px; left: 48px; right: 48px;
+  z-index: 3;
+  display: flex; justify-content: space-between; align-items: end;
+  font-family: var(--mono); font-size: 10px; letter-spacing: 0.24em;
+  color: var(--ink-faint); text-transform: uppercase;
+  opacity: 0; animation: rise 1.6s 1.4s forwards;
+}
+.hero-meta .stamp { display: flex; flex-direction: column; gap: 6px; }
+.hero-meta .stamp strong { color: var(--ink); font-weight: 400; font-size: 13px; letter-spacing: 0.15em; }
+.scroll-cue {
+  display: flex; flex-direction: column; align-items: center; gap: 12px;
+}
+.scroll-cue .line { width: 1px; height: 48px; background: linear-gradient(180deg, transparent, var(--gold), transparent); animation: pulse 2.4s ease-in-out infinite; }
+@keyframes pulse { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
+@keyframes rise { to { opacity: 1; transform: translateY(0); } }
+.hero-eyebrow, .hero h1, .hero-sub, .hero-actions, .hero-meta { transform: translateY(20px); }
+
+section { position: relative; padding: 140px 48px; }
+.section-head {
+  display: flex; align-items: end; justify-content: space-between;
+  margin-bottom: 80px; max-width: 1400px; margin-left: auto; margin-right: auto;
+  gap: 60px;
+}
+.section-eyebrow {
+  font-family: var(--mono); font-size: 11px; letter-spacing: 0.35em;
+  color: var(--gold); text-transform: uppercase;
+  display: flex; align-items: center; gap: 14px;
+  margin-bottom: 28px;
+}
+.section-eyebrow::before { content: "—"; color: var(--gold); }
+.section-title {
+  font-family: var(--serif); font-weight: 300;
+  font-size: clamp(40px, 5vw, 72px); line-height: 1.0;
+  letter-spacing: -0.015em; max-width: 720px;
+}
+.section-title em { font-style: italic; color: var(--gold); }
+.section-lede {
+  font-family: var(--sans); font-weight: 300; font-size: 16px; line-height: 1.7;
+  color: var(--ink-dim); max-width: 380px;
+}
+
+.destinations { padding-top: 60px; }
+.dest-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px;
+  max-width: 1400px; margin: 0 auto;
+}
+.dest-card {
+  position: relative; border: 1px solid var(--hair);
+  border-radius: 20px; overflow: hidden;
+  background: linear-gradient(180deg, rgba(255,255,255,0.025), rgba(255,255,255,0.005));
+  backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
+  transition: all 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+  cursor: pointer;
+  isolation: isolate;
+}
+.dest-card:hover { transform: translateY(-6px); border-color: var(--hair-strong); }
+.dest-card:hover .dest-image { transform: scale(1.06); }
+.dest-card:hover .dest-image-overlay { opacity: 0.5; }
+.dest-image-wrap {
+  position: relative; aspect-ratio: 4/5; overflow: hidden;
+  isolation: isolate;
+}
+.dest-image {
+  position: absolute; inset: 0; transition: transform 1.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.dest-image-overlay {
+  position: absolute; inset: 0; z-index: 2;
+  background: linear-gradient(180deg, transparent 40%, rgba(5,6,10,0.85) 100%);
+  opacity: 0.7; transition: opacity 0.6s;
+}
+.dest-body { padding: 28px 28px 32px; position: relative; z-index: 3; }
+.dest-coord {
+  font-family: var(--mono); font-size: 10px; letter-spacing: 0.3em;
+  color: var(--gold); text-transform: uppercase;
+  display: flex; justify-content: space-between;
+  margin-bottom: 18px; padding-bottom: 14px;
+  border-bottom: 1px solid var(--hair);
+}
+.dest-name {
+  font-family: var(--serif); font-weight: 300;
+  font-size: 38px; line-height: 1.05; letter-spacing: -0.01em;
+  margin-bottom: 8px;
+}
+.dest-name em { font-style: italic; color: var(--gold); }
+.dest-era {
+  font-family: var(--mono); font-size: 11px; letter-spacing: 0.2em;
+  color: var(--ink-faint); text-transform: uppercase;
+  margin-bottom: 22px;
+}
+.dest-desc {
+  font-size: 14px; line-height: 1.65; color: var(--ink-dim);
+  font-weight: 300; margin-bottom: 26px;
+}
+.dest-foot {
+  display: flex; justify-content: space-between; align-items: center;
+  padding-top: 22px; border-top: 1px solid var(--hair);
+}
+.dest-price {
+  font-family: var(--serif); font-size: 22px; font-weight: 400;
+}
+.dest-price small { font-family: var(--mono); font-size: 10px; color: var(--ink-faint); letter-spacing: 0.2em; text-transform: uppercase; display: block; margin-bottom: 2px; }
+.dest-arrow {
+  width: 44px; height: 44px; border-radius: 50%;
+  border: 1px solid var(--hair-strong);
+  display: grid; place-items: center;
+  transition: all 0.4s;
+}
+.dest-card:hover .dest-arrow { background: var(--gold); border-color: var(--gold); }
+.dest-card:hover .dest-arrow svg { stroke: var(--void); }
+.dest-arrow svg { width: 16px; height: 16px; stroke: var(--ink); fill: none; stroke-width: 1.5; transition: stroke 0.4s; }
+
+.img-belle, .img-mars, .img-ancient {
+  width: 100%; height: 100%;
+}
+.img-belle {
+  background:
+    radial-gradient(ellipse at 30% 40%, oklch(0.55 0.08 50) 0%, transparent 50%),
+    radial-gradient(ellipse at 70% 70%, oklch(0.4 0.06 35) 0%, transparent 60%),
+    linear-gradient(180deg, oklch(0.25 0.04 50), oklch(0.12 0.03 30));
+}
+.img-mars {
+  background:
+    radial-gradient(circle at 60% 35%, oklch(0.55 0.12 30) 0%, transparent 45%),
+    radial-gradient(ellipse at 40% 80%, oklch(0.3 0.08 25) 0%, transparent 50%),
+    linear-gradient(180deg, oklch(0.18 0.05 25), oklch(0.08 0.02 20));
+}
+.img-ancient {
+  background:
+    radial-gradient(ellipse at 50% 30%, oklch(0.5 0.06 220) 0%, transparent 55%),
+    radial-gradient(ellipse at 50% 90%, oklch(0.25 0.04 250) 0%, transparent 60%),
+    linear-gradient(180deg, oklch(0.2 0.04 240), oklch(0.08 0.02 240));
+}
+.img-belle::before, .img-mars::before, .img-ancient::before {
+  content: ""; position: absolute; inset: -20%;
+  background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.06), transparent 40%);
+  animation: drift 14s ease-in-out infinite alternate;
+}
+@keyframes drift {
+  to { transform: translate(8%, 5%) scale(1.1); }
+}
+.dest-image::after {
+  content: ""; position: absolute; inset: 0;
+  background: repeating-linear-gradient(180deg, transparent 0, transparent 3px, rgba(255,255,255,0.02) 3px, rgba(255,255,255,0.02) 4px);
+  pointer-events: none;
+}
+.dest-tag {
+  position: absolute; top: 22px; left: 22px; z-index: 4;
+  font-family: var(--mono); font-size: 10px; letter-spacing: 0.25em;
+  color: var(--ink); text-transform: uppercase;
+  background: rgba(5,6,10,0.55); backdrop-filter: blur(10px);
+  border: 1px solid var(--hair-strong); border-radius: 999px;
+  padding: 6px 12px;
+}
+.dest-status {
+  position: absolute; top: 22px; right: 22px; z-index: 4;
+  font-family: var(--mono); font-size: 9px; letter-spacing: 0.25em;
+  color: var(--gold); text-transform: uppercase;
+  display: flex; align-items: center; gap: 8px;
+}
+.dest-status .dot {
+  width: 6px; height: 6px; border-radius: 50%; background: var(--gold);
+  box-shadow: 0 0 12px var(--gold); animation: blink 2s ease-in-out infinite;
+}
+@keyframes blink { 50% { opacity: 0.4; } }
+
+.experience { background: linear-gradient(180deg, transparent, rgba(255,255,255,0.015), transparent); }
+.exp-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px;
+  max-width: 1400px; margin: 0 auto;
+  border: 1px solid var(--hair);
+  background: var(--hair);
+}
+.exp-step {
+  background: var(--void);
+  padding: 44px 32px 52px;
+  position: relative;
+  transition: background 0.6s;
+}
+.exp-step:hover { background: var(--void-2); }
+.exp-num {
+  font-family: var(--mono); font-size: 10px; color: var(--gold);
+  letter-spacing: 0.3em; margin-bottom: 28px;
+}
+.exp-title {
+  font-family: var(--serif); font-size: 28px; font-weight: 400;
+  margin-bottom: 14px; letter-spacing: -0.01em;
+}
+.exp-desc { font-size: 13px; color: var(--ink-dim); line-height: 1.65; font-weight: 300; }
+.exp-icon {
+  width: 36px; height: 36px; margin-bottom: 24px;
+  border: 1px solid var(--gold-soft); border-radius: 50%;
+  display: grid; place-items: center; color: var(--gold);
+  font-family: var(--serif); font-size: 18px;
+}
+
+.testimony { padding: 160px 48px; }
+.testimony-inner {
+  max-width: 980px; margin: 0 auto; text-align: center;
+}
+.testimony blockquote {
+  font-family: var(--serif); font-weight: 300;
+  font-size: clamp(28px, 3.6vw, 56px); line-height: 1.2; letter-spacing: -0.015em;
+  font-style: italic; margin-bottom: 48px;
+}
+.testimony blockquote::before, .testimony blockquote::after { content: '"'; color: var(--gold); }
+.testimony-author {
+  font-family: var(--mono); font-size: 11px; letter-spacing: 0.3em;
+  color: var(--ink-dim); text-transform: uppercase;
+}
+.testimony-author strong { color: var(--ink); font-weight: 400; }
+
+.foot {
+  border-top: 1px solid var(--hair);
+  padding: 80px 48px 40px;
+  background: var(--void-2);
+}
+.foot-grid {
+  display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 60px; max-width: 1400px; margin: 0 auto 60px;
+}
+.foot h4 {
+  font-family: var(--mono); font-size: 10px; letter-spacing: 0.3em;
+  color: var(--gold); text-transform: uppercase; margin-bottom: 22px; font-weight: 400;
+}
+.foot ul { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+.foot a { color: var(--ink-dim); text-decoration: none; font-size: 14px; transition: color 0.3s; cursor: pointer; }
+.foot a:hover { color: var(--gold); }
+.foot-brand .wordmark { font-family: var(--serif); font-size: 32px; letter-spacing: 0.15em; margin-bottom: 14px; display: block; }
+.foot-brand p { color: var(--ink-dim); font-size: 14px; line-height: 1.7; font-weight: 300; max-width: 380px; }
+.foot-bottom {
+  border-top: 1px solid var(--hair); padding-top: 28px;
+  display: flex; justify-content: space-between;
+  font-family: var(--mono); font-size: 10px; letter-spacing: 0.25em;
+  color: var(--ink-faint); text-transform: uppercase;
+  max-width: 1400px; margin: 0 auto;
+}
+
+.bot-launcher {
+  position: fixed; bottom: 28px; right: 28px; z-index: 60;
+  width: 64px; height: 64px; border-radius: 50%;
+  background: var(--gold); color: var(--void);
+  border: none; cursor: pointer;
+  display: grid; place-items: center;
+  box-shadow: 0 20px 60px -10px oklch(0.82 0.09 80 / 0.45), 0 0 0 1px rgba(255,255,255,0.1);
+  transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.bot-launcher:hover { transform: scale(1.06) rotate(-3deg); }
+.bot-launcher::after {
+  content: ""; position: absolute; inset: -4px; border-radius: 50%;
+  border: 1px solid var(--gold); opacity: 0.4;
+  animation: ringPulse 2.4s ease-out infinite;
+}
+@keyframes ringPulse {
+  0% { transform: scale(1); opacity: 0.5; }
+  100% { transform: scale(1.4); opacity: 0; }
+}
+.bot-window {
+  position: fixed; bottom: 28px; right: 28px; z-index: 61;
+  width: 400px; height: 580px; max-height: calc(100vh - 56px);
+  background: rgba(10, 12, 18, 0.85);
+  backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px);
+  border: 1px solid var(--hair-strong); border-radius: 24px;
+  display: flex; flex-direction: column; overflow: hidden;
+  box-shadow: 0 40px 100px -20px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,255,255,0.04);
+  transform-origin: bottom right;
+  animation: botIn 0.5s cubic-bezier(0.2, 0.9, 0.2, 1.1);
+}
+@keyframes botIn {
+  from { opacity: 0; transform: scale(0.85) translateY(20px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+.bot-head {
+  padding: 22px 24px; border-bottom: 1px solid var(--hair);
+  display: flex; align-items: center; gap: 14px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.03), transparent);
+}
+.bot-avatar {
+  width: 40px; height: 40px; border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, var(--gold), oklch(0.45 0.1 50));
+  position: relative; display: grid; place-items: center;
+  flex-shrink: 0;
+}
+.bot-avatar::after {
+  content: ""; position: absolute; inset: 0; border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.2);
+}
+.bot-avatar .core { width: 8px; height: 8px; background: rgba(255,255,255,0.9); border-radius: 50%; box-shadow: 0 0 12px rgba(255,255,255,0.7); animation: blink 2.4s ease-in-out infinite; }
+.bot-head-text { flex: 1; min-width: 0; }
+.bot-head-text h3 { font-family: var(--serif); font-size: 18px; font-weight: 400; letter-spacing: 0.05em; }
+.bot-head-text p { font-family: var(--mono); font-size: 9px; letter-spacing: 0.3em; color: var(--gold); text-transform: uppercase; margin-top: 2px; display: flex; align-items: center; gap: 6px; }
+.bot-head-text p::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: oklch(0.7 0.18 145); box-shadow: 0 0 8px oklch(0.7 0.18 145); }
+.bot-close {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: rgba(255,255,255,0.04); border: 1px solid var(--hair);
+  color: var(--ink-dim); cursor: pointer;
+  display: grid; place-items: center; font-size: 14px;
+  transition: all 0.3s;
+}
+.bot-close:hover { background: rgba(255,255,255,0.08); color: var(--ink); }
+.bot-body {
+  flex: 1; overflow-y: auto; padding: 24px;
+  display: flex; flex-direction: column; gap: 14px;
+  scrollbar-width: thin; scrollbar-color: var(--hair) transparent;
+}
+.bot-body::-webkit-scrollbar { width: 4px; }
+.bot-body::-webkit-scrollbar-thumb { background: var(--hair-strong); border-radius: 2px; }
+.bot-msg { max-width: 85%; font-size: 14px; line-height: 1.55; font-weight: 300; }
+.bot-msg.ai {
+  align-self: flex-start;
+  background: rgba(255,255,255,0.04); border: 1px solid var(--hair);
+  padding: 14px 16px; border-radius: 4px 16px 16px 16px;
+  color: var(--ink);
+}
+.bot-msg.user {
+  align-self: flex-end;
+  background: var(--gold-soft); border: 1px solid var(--gold-soft);
+  padding: 12px 16px; border-radius: 16px 4px 16px 16px;
+  color: var(--ink);
+}
+.bot-msg.ai em { font-family: var(--serif); font-style: italic; font-size: 15px; color: var(--gold); }
+.bot-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+.bot-chip {
+  background: rgba(255,255,255,0.03); border: 1px solid var(--hair);
+  color: var(--ink-dim); font-family: var(--sans); font-size: 12px;
+  padding: 8px 14px; border-radius: 999px; cursor: pointer;
+  transition: all 0.3s;
+}
+.bot-chip:hover { border-color: var(--gold); color: var(--gold); }
+.bot-foot {
+  padding: 16px 20px 20px; border-top: 1px solid var(--hair);
+  background: rgba(0,0,0,0.2);
+}
+.bot-input-wrap {
+  display: flex; align-items: center; gap: 10px;
+  background: rgba(255,255,255,0.04); border: 1px solid var(--hair);
+  border-radius: 999px; padding: 6px 6px 6px 18px;
+  transition: border 0.3s;
+}
+.bot-input-wrap:focus-within { border-color: var(--gold); }
+.bot-input {
+  flex: 1; background: transparent; border: none; outline: none;
+  color: var(--ink); font-family: var(--sans); font-size: 14px; font-weight: 300;
+  padding: 8px 0;
+}
+.bot-input::placeholder { color: var(--ink-faint); }
+.bot-send {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: var(--gold); border: none; cursor: pointer;
+  display: grid; place-items: center; color: var(--void);
+  transition: all 0.3s; flex-shrink: 0;
+}
+.bot-send:hover { transform: scale(1.05); }
+.bot-send:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+.bot-typing { display: flex; gap: 4px; padding: 14px 16px; align-items: center; }
+.bot-typing span { width: 6px; height: 6px; border-radius: 50%; background: var(--gold); animation: typing 1.4s ease-in-out infinite; }
+.bot-typing span:nth-child(2) { animation-delay: 0.2s; }
+.bot-typing span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes typing {
+  0%, 80%, 100% { opacity: 0.3; transform: translateY(0); }
+  40% { opacity: 1; transform: translateY(-3px); }
+}
+.bot-disclaimer { font-family: var(--mono); font-size: 9px; letter-spacing: 0.2em; color: var(--ink-faint); text-transform: uppercase; text-align: center; margin-top: 10px; }
+
+.reveal { opacity: 0; transform: translateY(40px); transition: opacity 1.2s, transform 1.2s; }
+.reveal.in { opacity: 1; transform: translateY(0); }
+
+@media (max-width: 900px) {
+  .nav { padding: 16px 20px; }
+  .nav-links { display: none; }
+  section { padding: 90px 20px; }
+  .dest-grid { grid-template-columns: 1fr; }
+  .exp-grid { grid-template-columns: 1fr 1fr; }
+  .foot-grid { grid-template-columns: 1fr 1fr; gap: 40px; }
+  .section-head { flex-direction: column; align-items: start; }
+  .bot-window { width: calc(100vw - 32px); right: 16px; bottom: 16px; }
+  .hero-meta { left: 20px; right: 20px; bottom: 24px; flex-direction: column; gap: 20px; align-items: start; }
+  .foot-bottom { flex-direction: column; gap: 12px; }
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-logo">
+    <div class="mark"></div>
+    <div class="wordmark">CHRONOS</div>
+  </div>
+  <div class="nav-links">
+    <a>Destinations</a>
+    <a>The Voyage</a>
+    <a>Atelier</a>
+    <a>Journal</a>
+    <a>Membership</a>
+  </div>
+  <button class="nav-cta">Request Manifest</button>
+</nav>
+
+<header class="hero">
+  <canvas id="starfield"></canvas>
+  <div class="hero-nebula"></div>
+  <div class="hero-vignette"></div>
+
+  <div class="hero-inner">
+    <div class="hero-eyebrow">Est. 2087 · Members Only</div>
+    <h1>The journey<br>is not <em>where.</em><br>It is <em>when.</em></h1>
+    <p class="hero-sub">Chronos is a private temporal travel atelier. We engineer single-occupant voyages to seventeen calibrated moments in human history, each accompanied by a personal historian-concierge and a fully reversible quantum anchor.</p>
+    <div class="hero-actions">
+      <button class="btn-primary">Begin Your Voyage <span>→</span></button>
+      <button class="btn-ghost">Watch the Film</button>
+    </div>
+  </div>
+
+  <div class="hero-meta">
+    <div class="stamp">
+      <span>Anchor Status</span>
+      <strong>Stable · 99.984%</strong>
+    </div>
+    <div class="scroll-cue">
+      <span>SCROLL</span>
+      <div class="line"></div>
+    </div>
+    <div class="stamp" style="text-align:right;">
+      <span>Next Departure</span>
+      <strong>17 Mar 2087 · Bay IX</strong>
+    </div>
+  </div>
+</header>
+
+<section class="destinations" id="destinations">
+  <div class="section-head reveal">
+    <div>
+      <div class="section-eyebrow">III Featured Voyages</div>
+      <h2 class="section-title">Seventeen moments<br>across <em>four millennia.</em></h2>
+    </div>
+    <p class="section-lede">Each destination is hand-curated for historical resonance, sensory richness, and absolute safety of return. Anchors are recalibrated after every voyage.</p>
+  </div>
+
+  <div class="dest-grid">
+    <article class="dest-card reveal">
+      <div class="dest-image-wrap">
+        <div class="dest-image"><div class="img-belle"></div></div>
+        <div class="dest-image-overlay"></div>
+        <div class="dest-tag">Voyage 04</div>
+        <div class="dest-status"><span class="dot"></span>Anchors Open</div>
+      </div>
+      <div class="dest-body">
+        <div class="dest-coord"><span>48.8566°N · 2.3522°E</span><span>Δt −198y</span></div>
+        <h3 class="dest-name">Paris, <em>La Belle Époque</em></h3>
+        <p class="dest-era">Spring 1889 · 14 days</p>
+        <p class="dest-desc">Arrive the morning the Eiffel Tower opens. Champagne at Maxim's, a private box at the Opéra Garnier, and a sitting with Sarah Bernhardt arranged in advance.</p>
+        <div class="dest-foot">
+          <div class="dest-price"><small>From</small>$2.4M</div>
+          <div class="dest-arrow"><svg viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></div>
+        </div>
+      </div>
+    </article>
+
+    <article class="dest-card reveal">
+      <div class="dest-image-wrap">
+        <div class="dest-image"><div class="img-mars"></div></div>
+        <div class="dest-image-overlay"></div>
+        <div class="dest-tag">Voyage 11</div>
+        <div class="dest-status"><span class="dot"></span>3 Anchors Left</div>
+      </div>
+      <div class="dest-body">
+        <div class="dest-coord"><span>4.5°S · 137.4°E · Mars</span><span>Δt +44y</span></div>
+        <h3 class="dest-name">The <em>First Footstep</em></h3>
+        <p class="dest-era">November 2131 · 9 days</p>
+        <p class="dest-desc">Witness, from an authorized overlook 1.2 km from Gale Crater, the Sōl Mission's first crewed descent. Audio-isolated. Photographically restricted. Unforgettable.</p>
+        <div class="dest-foot">
+          <div class="dest-price"><small>From</small>$6.8M</div>
+          <div class="dest-arrow"><svg viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></div>
+        </div>
+      </div>
+    </article>
+
+    <article class="dest-card reveal">
+      <div class="dest-image-wrap">
+        <div class="dest-image"><div class="img-ancient"></div></div>
+        <div class="dest-image-overlay"></div>
+        <div class="dest-tag">Voyage 02</div>
+        <div class="dest-status"><span class="dot"></span>Anchors Open</div>
+      </div>
+      <div class="dest-body">
+        <div class="dest-coord"><span>29.9792°N · 31.1342°E</span><span>Δt −4,635y</span></div>
+        <h3 class="dest-name">Giza, <em>Under Stars</em></h3>
+        <p class="dest-era">Inundation Season, 2570 BCE · 21 days</p>
+        <p class="dest-desc">A privately staffed Nile dahabiya, an evening with the high priest of Ra, and supervised access to the unfinished King's Chamber during the limestone capstone procession.</p>
+        <div class="dest-foot">
+          <div class="dest-price"><small>From</small>$3.9M</div>
+          <div class="dest-arrow"><svg viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></div>
+        </div>
+      </div>
+    </article>
+  </div>
+</section>
+
+<section class="experience">
+  <div class="section-head reveal">
+    <div>
+      <div class="section-eyebrow">The Voyage</div>
+      <h2 class="section-title">Four phases.<br>One <em>unforgettable</em> arc.</h2>
+    </div>
+    <p class="section-lede">From the first consultation to your debrief, every moment is choreographed. The voyage itself is the smallest part of what we do.</p>
+  </div>
+
+  <div class="exp-grid reveal">
+    <div class="exp-step">
+      <div class="exp-icon">I</div>
+      <div class="exp-num">01 / CONSULT</div>
+      <h3 class="exp-title">The Atelier</h3>
+      <p class="exp-desc">Three evenings with your historian. We translate your interior life into a calibrated destination — no two voyages are alike.</p>
+    </div>
+    <div class="exp-step">
+      <div class="exp-icon">II</div>
+      <div class="exp-num">02 / PREPARE</div>
+      <h3 class="exp-title">Acclimation</h3>
+      <p class="exp-desc">Period language, custom wardrobe, ten weeks of physiological tuning at our Lake Geneva residence.</p>
+    </div>
+    <div class="exp-step">
+      <div class="exp-icon">III</div>
+      <div class="exp-num">03 / DEPART</div>
+      <h3 class="exp-title">The Bay</h3>
+      <p class="exp-desc">A 19-second transit from our Mont-Blanc facility. You arrive rested, anchored, and accompanied.</p>
+    </div>
+    <div class="exp-step">
+      <div class="exp-icon">IV</div>
+      <div class="exp-num">04 / RETURN</div>
+      <h3 class="exp-title">Debrief</h3>
+      <p class="exp-desc">Seven days at the residence with a private psychoanalyst and an archivist who builds your personal voyage portfolio.</p>
+    </div>
+  </div>
+</section>
+
+<section class="testimony">
+  <div class="testimony-inner reveal">
+    <blockquote>I expected a holiday. I returned with a different relationship to my own century.</blockquote>
+    <div class="testimony-author"><strong>M.D.</strong> &nbsp;·&nbsp; Voyage 07 · Florence, 1502</div>
+  </div>
+</section>
+
+<footer class="foot">
+  <div class="foot-grid">
+    <div class="foot-brand">
+      <span class="wordmark">CHRONOS</span>
+      <p>Private temporal travel, by appointment only. Chronos S.A. is regulated under the 2081 Geneva Accord on Anchored Voyage. All journeys are fully reversible.</p>
+    </div>
+    <div>
+      <h4>Atelier</h4>
+      <ul><li><a>Destinations</a></li><li><a>The Voyage</a></li><li><a>Atelier Visits</a></li><li><a>Journal</a></li></ul>
+    </div>
+    <div>
+      <h4>Membership</h4>
+      <ul><li><a>Apply</a></li><li><a>Patrons' Society</a></li><li><a>Referrals</a></li><li><a>Concierge</a></li></ul>
+    </div>
+    <div>
+      <h4>Contact</h4>
+      <ul><li><a>+41 22 555 0817</a></li><li><a>atelier@chronos.travel</a></li><li><a>Place du Bourg-de-Four 7<br>Geneva, CH</a></li></ul>
+    </div>
+  </div>
+  <div class="foot-bottom">
+    <span>© 2087 Chronos S.A.</span>
+    <span>Anchored · Reversible · Discreet</span>
+    <span>Privacy · Terms · Anchor Disclosures</span>
+  </div>
+</footer>
+
+<div id="bot-mount"></div>
+
+<script>
+(function() {
+  const canvas = document.getElementById('starfield');
+  const ctx = canvas.getContext('2d');
+  let stars, shootingStars;
+  function resize() {
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width = window.innerWidth * dpr;
+    canvas.height = canvas.offsetHeight * dpr;
+    canvas.style.width = '100%';
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.scale(dpr, dpr);
+    initStars();
+  }
+  function initStars() {
+    stars = [];
+    const count = Math.floor((window.innerWidth * (canvas.offsetHeight)) / 4500);
+    for (let i = 0; i < count; i++) {
+      stars.push({
+        x: Math.random() * window.innerWidth,
+        y: Math.random() * canvas.offsetHeight,
+        r: Math.random() * 1.4 + 0.2,
+        a: Math.random() * 0.6 + 0.2,
+        s: Math.random() * 0.015 + 0.005,
+        twinkle: Math.random() * Math.PI * 2,
+        depth: Math.random()
+      });
+    }
+    shootingStars = [];
+  }
+  function spawnShoot() {
+    if (Math.random() < 0.004 && shootingStars.length < 2) {
+      shootingStars.push({
+        x: Math.random() * window.innerWidth,
+        y: Math.random() * canvas.offsetHeight * 0.5,
+        vx: 4 + Math.random() * 3,
+        vy: 1 + Math.random() * 1.5,
+        life: 1
+      });
+    }
+  }
+  function tick() {
+    ctx.clearRect(0, 0, window.innerWidth, canvas.offsetHeight);
+    for (const s of stars) {
+      s.twinkle += s.s;
+      const alpha = s.a * (0.6 + 0.4 * Math.sin(s.twinkle));
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      const tint = s.depth > 0.85 ? '255,220,170' : (s.depth > 0.6 ? '220,230,255' : '255,255,255');
+      ctx.fillStyle = `rgba(${tint},${alpha})`;
+      ctx.fill();
+      if (s.r > 1) {
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.r * 3, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(${tint},${alpha * 0.08})`;
+        ctx.fill();
+      }
+      s.x -= 0.02 * (s.depth + 0.2);
+      if (s.x < -5) s.x = window.innerWidth + 5;
+    }
+    spawnShoot();
+    for (let i = shootingStars.length - 1; i >= 0; i--) {
+      const sh = shootingStars[i];
+      sh.x += sh.vx; sh.y += sh.vy; sh.life -= 0.012;
+      const grad = ctx.createLinearGradient(sh.x, sh.y, sh.x - sh.vx * 14, sh.y - sh.vy * 14);
+      grad.addColorStop(0, `rgba(255,230,180,${sh.life})`);
+      grad.addColorStop(1, 'rgba(255,230,180,0)');
+      ctx.strokeStyle = grad;
+      ctx.lineWidth = 1.4;
+      ctx.beginPath();
+      ctx.moveTo(sh.x, sh.y);
+      ctx.lineTo(sh.x - sh.vx * 14, sh.y - sh.vy * 14);
+      ctx.stroke();
+      if (sh.life <= 0 || sh.x > window.innerWidth + 50) shootingStars.splice(i, 1);
+    }
+    requestAnimationFrame(tick);
+  }
+  window.addEventListener('resize', resize);
+  resize();
+  tick();
+})();
+
+(function() {
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+})();
+</script>
+
+<script type="text/babel">
+const { useState, useEffect, useRef } = React;
+
+const QUICK_PROMPTS = [
+  "Where should a first-time traveler begin?",
+  "How does the quantum anchor work?",
+  "Tell me about Mars in 2131",
+  "What is membership?"
+];
+
+function offlineReply(q) {
+  const s = q.toLowerCase();
+  if (s.includes('anchor') || s.includes('safe') || s.includes('return') || s.includes('how does'))
+    return "The quantum anchor is, in essence, a tether. Your present moment is *held open* — calibrated to a femtosecond — so the past you visit cannot close behind you. Recovery rate over seventeen voyages remains 100%.";
+  if (s.includes('mars') || s.includes('2131') || s.includes('first foot'))
+    return "*The First Footstep* is our most requested forward voyage. You observe the Sōl descent from an authorized overlook — silent, audio-isolated, photographically restricted. Nine days. From $6.8M.";
+  if (s.includes('paris') || s.includes('belle') || s.includes('1889'))
+    return "Paris in the spring of 1889 is *incomparable.* The Tower opens, Maxim's is new, and an evening with Sarah Bernhardt can be arranged. Fourteen days. From $2.4M.";
+  if (s.includes('giza') || s.includes('egypt') || s.includes('pyramid') || s.includes('2570'))
+    return "Giza under stars is our oldest destination — 2570 BCE, inundation season. A private dahabiya on the Nile, and supervised access to the unfinished King's Chamber. Twenty-one days. From $3.9M.";
+  if (s.includes('member') || s.includes('apply') || s.includes('join'))
+    return "Membership is by invitation. We accept eleven new patrons each year. Begin with a Manifest request — three evenings with one of our historians, in Geneva or by anchor-link, *no obligation.*";
+  if (s.includes('first') || s.includes('begin') || s.includes('recommend') || s.includes('start'))
+    return "For a first voyage I almost always suggest *Paris, 1889.* Familiar enough to feel like a homecoming, strange enough to never forget. The anchor calibration is the most stable in our catalogue.";
+  if (s.includes('price') || s.includes('cost') || s.includes('how much'))
+    return "Voyages begin at $2.4M and rise with the *temporal distance.* Each price includes ten weeks of acclimation, the voyage itself, and a seven-day debrief at our Lake Geneva residence.";
+  if (s.includes('time') || s.includes('long') || s.includes('duration'))
+    return "From signed Manifest to return debrief — typically *fourteen weeks.* The voyage itself is the smallest part. The preparation is the journey.";
+  if (s.includes('hello') || s.includes('hi') || s.includes('hey'))
+    return "A pleasure. I can speak about our seventeen destinations, the anchor, membership, or simply *imagine a voyage with you.* Where shall we begin?";
+  return "A thoughtful question. Allow me to *consult the archive* — would you like to speak with one of our historians directly? I can arrange a Manifest evening this week.";
+}
+
+function ChronosBot() {
+  const [open, setOpen] = useState(false);
+  const [messages, setMessages] = useState([
+    { role: 'ai', content: "Good evening. I am *Lumen*, your concierge at Chronos. I can help you imagine a voyage, or answer anything about our seventeen destinations. Where shall we begin?" }
+  ]);
+  const [input, setInput] = useState("");
+  const [sending, setSending] = useState(false);
+  const bodyRef = useRef(null);
+  const inputRef = useRef(null);
+
+  useEffect(() => {
+    if (bodyRef.current) bodyRef.current.scrollTop = bodyRef.current.scrollHeight;
+  }, [messages, sending]);
+
+  useEffect(() => {
+    if (open && inputRef.current) setTimeout(() => inputRef.current.focus(), 400);
+  }, [open]);
+
+  async function send(text) {
+    const content = (text ?? input).trim();
+    if (!content || sending) return;
+    setInput("");
+    const next = [...messages, { role: 'user', content }];
+    setMessages(next);
+    setSending(true);
+    try {
+      await new Promise(r => setTimeout(r, 700 + Math.random() * 600));
+      const reply = offlineReply(content);
+      setMessages(m => [...m, { role: 'ai', content: reply }]);
+    } catch (e) {
+      setMessages(m => [...m, { role: 'ai', content: "Forgive me — our temporal link has flickered. *Try again in a moment.*" }]);
+    } finally {
+      setSending(false);
+    }
+  }
+
+  function renderAI(content) {
+    const parts = content.split(/(\*[^*]+\*)/g);
+    return parts.map((p, i) => p.startsWith('*') && p.endsWith('*')
+      ? <em key={i}>{p.slice(1, -1)}</em>
+      : <span key={i}>{p}</span>
+    );
+  }
+
+  if (!open) {
+    return (
+      <button className="bot-launcher" onClick={() => setOpen(true)} aria-label="Open concierge">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4">
+          <circle cx="12" cy="12" r="9" />
+          <path d="M12 7v5l3 2" strokeLinecap="round" />
+          <circle cx="12" cy="12" r="0.8" fill="currentColor" />
+        </svg>
+      </button>
+    );
+  }
+
+  const showChips = messages.length <= 1;
+
+  return (
+    <div className="bot-window" role="dialog" aria-label="Chronos concierge">
+      <div className="bot-head">
+        <div className="bot-avatar"><div className="core"></div></div>
+        <div className="bot-head-text">
+          <h3>Lumen</h3>
+          <p>Concierge · Online</p>
+        </div>
+        <button className="bot-close" onClick={() => setOpen(false)} aria-label="Close">×</button>
+      </div>
+
+      <div className="bot-body" ref={bodyRef}>
+        {messages.map((m, i) => (
+          <div key={i} className={`bot-msg ${m.role}`}>
+            {m.role === 'ai' ? renderAI(m.content) : m.content}
+          </div>
+        ))}
+        {sending && (
+          <div className="bot-msg ai" style={{ padding: 0 }}>
+            <div className="bot-typing"><span></span><span></span><span></span></div>
+          </div>
+        )}
+        {showChips && (
+          <div className="bot-chips">
+            {QUICK_PROMPTS.map(q => (
+              <button key={q} className="bot-chip" onClick={() => send(q)}>{q}</button>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <div className="bot-foot">
+        <div className="bot-input-wrap">
+          <input
+            ref={inputRef}
+            className="bot-input"
+            placeholder="Ask Lumen…"
+            value={input}
+            onChange={e => setInput(e.target.value)}
+            onKeyDown={e => { if (e.key === 'Enter') send(); }}
+            disabled={sending}
+          />
+          <button className="bot-send" onClick={() => send()} disabled={sending || !input.trim()} aria-label="Send">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M5 12h14m-6-6 6 6-6 6" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </button>
+        </div>
+        <div className="bot-disclaimer">Replies are AI-generated · For illustrative pleasure</div>
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('bot-mount')).render(<ChronosBot />);
+</script>
+</body>
+</html>
