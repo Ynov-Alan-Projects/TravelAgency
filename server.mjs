@@ -3,6 +3,7 @@ import { readFile } from 'node:fs/promises';
 import { extname, join, normalize } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createChatReply } from './lib/openrouter-chat.js';
+import { consumeRateLimit } from './lib/rate-limit.js';
 
 const root = fileURLToPath(new URL('.', import.meta.url));
 
@@ -49,9 +50,25 @@ async function readJson(req) {
   return raw ? JSON.parse(raw) : {};
 }
 
+function clientKey(req) {
+  const forwarded = req.headers['x-forwarded-for'];
+  if (typeof forwarded === 'string' && forwarded.length > 0) {
+    return forwarded.split(',')[0].trim();
+  }
+  return req.socket?.remoteAddress || 'unknown';
+}
+
 async function handleChat(req, res) {
   if (req.method !== 'POST') {
     json(res, 405, { error: 'Méthode non autorisée' });
+    return;
+  }
+  const limit = consumeRateLimit(clientKey(req));
+  res.setHeader('X-RateLimit-Limit', String(limit.limit));
+  res.setHeader('X-RateLimit-Remaining', String(limit.remaining));
+  if (!limit.allowed) {
+    res.setHeader('Retry-After', String(limit.retryAfter));
+    json(res, 429, { error: `Trop de requêtes. Réessayez dans ${limit.retryAfter}s.` });
     return;
   }
   try {
