@@ -1,10 +1,10 @@
 <!doctype html>
-<html lang="en">
+<html lang="fr">
 <head>
 <meta charset="utf-8">
-<title>Chronos — Private Time Travel</title>
+<title>Chronos — TimeTravel Agency</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="description" content="Chronos — a private temporal travel atelier. Seventeen calibrated voyages across four millennia.">
+<meta name="description" content="Chronos — agence de voyage temporel immersive : Paris 1889, Crétacé et Florence 1504.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300&family=Space+Grotesk:wght@300;400;500;600&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet">
@@ -81,6 +81,7 @@ body::after {
   text-transform: uppercase; font-size: 11px; letter-spacing: 0.2em;
   background: rgba(255,255,255,0.02); cursor: pointer; color: var(--ink);
   transition: all 0.3s;
+  text-decoration: none;
 }
 .nav-cta:hover { border-color: var(--gold); color: var(--gold); }
 
@@ -150,6 +151,7 @@ body::after {
   display: inline-flex; align-items: center; gap: 10px;
   transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
   position: relative; overflow: hidden;
+  text-decoration: none;
 }
 .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 20px 60px -10px oklch(0.82 0.09 80 / 0.5); }
 .btn-primary::before {
@@ -165,6 +167,7 @@ body::after {
   text-transform: uppercase; font-weight: 400; cursor: pointer;
   display: inline-flex; align-items: center; gap: 10px;
   backdrop-filter: blur(20px); transition: all 0.4s;
+  text-decoration: none;
 }
 .btn-ghost:hover { border-color: var(--gold); color: var(--gold); }
 
@@ -233,6 +236,10 @@ section { position: relative; padding: 140px 48px; }
 }
 .dest-image {
   position: absolute; inset: 0; transition: transform 1.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.dest-media {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+  filter: saturate(0.9) contrast(1.05) brightness(0.86);
 }
 .dest-image-overlay {
   position: absolute; inset: 0; z-index: 2;
@@ -363,6 +370,38 @@ section { position: relative; padding: 140px 48px; }
   display: grid; place-items: center; color: var(--gold);
   font-family: var(--serif); font-size: 18px;
 }
+
+.planner {
+  background: linear-gradient(180deg, rgba(255,255,255,0.012), rgba(255,255,255,0.03), rgba(255,255,255,0.012));
+}
+.planner-grid {
+  max-width: 1400px; margin: 0 auto;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 28px;
+}
+.planner-panel {
+  border: 1px solid var(--hair); border-radius: 20px;
+  padding: 34px; background: rgba(255,255,255,0.025);
+  backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+}
+.planner-panel h3 {
+  font-family: var(--serif); font-size: 34px; font-weight: 300;
+  margin-bottom: 18px;
+}
+.planner-field { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+.planner-field label {
+  font-family: var(--mono); font-size: 10px; letter-spacing: 0.24em;
+  color: var(--gold); text-transform: uppercase;
+}
+.planner-field select, .planner-field input {
+  width: 100%; border: 1px solid var(--hair-strong); border-radius: 12px;
+  background: rgba(5,6,10,0.7); color: var(--ink);
+  padding: 13px 14px; font-family: var(--sans); font-size: 14px;
+}
+.planner-result {
+  min-height: 58px; margin-top: 18px; color: var(--ink-dim);
+  font-size: 14px; line-height: 1.55;
+}
+.planner-result strong { color: var(--gold); font-weight: 500; }
 
 .testimony { padding: 160px 48px; }
 .testimony-inner {
@@ -541,6 +580,7 @@ section { position: relative; padding: 140px 48px; }
   section { padding: 90px 20px; }
   .dest-grid { grid-template-columns: 1fr; }
   .exp-grid { grid-template-columns: 1fr 1fr; }
+  .planner-grid { grid-template-columns: 1fr; }
   .foot-grid { grid-template-columns: 1fr 1fr; gap: 40px; }
   .section-head { flex-direction: column; align-items: start; }
   .bot-window { width: calc(100vw - 32px); right: 16px; bottom: 16px; }
@@ -557,13 +597,13 @@ section { position: relative; padding: 140px 48px; }
     <div class="wordmark">CHRONOS</div>
   </div>
   <div class="nav-links">
-    <a>Destinations</a>
-    <a>The Voyage</a>
-    <a>Atelier</a>
-    <a>Journal</a>
-    <a>Membership</a>
+    <a href="#destinations">Destinations</a>
+    <a href="#voyage">Le Voyage</a>
+    <a href="#atelier">Atelier</a>
+    <a href="#journal">Journal</a>
+    <a href="#membership">Membres</a>
   </div>
-  <button class="nav-cta">Request Manifest</button>
+  <a class="nav-cta" href="#planner">Demander le manifeste</a>
 </nav>
 
 <header class="hero">
@@ -572,27 +612,27 @@ section { position: relative; padding: 140px 48px; }
   <div class="hero-vignette"></div>
 
   <div class="hero-inner">
-    <div class="hero-eyebrow">Est. 2087 · Members Only</div>
-    <h1>The journey<br>is not <em>where.</em><br>It is <em>when.</em></h1>
-    <p class="hero-sub">Chronos is a private temporal travel atelier. We engineer single-occupant voyages to seventeen calibrated moments in human history, each accompanied by a personal historian-concierge and a fully reversible quantum anchor.</p>
+    <div class="hero-eyebrow">Est. 2087 · Agence privée</div>
+    <h1>Le voyage<br>n'est pas <em>où.</em><br>C'est <em>quand.</em></h1>
+    <p class="hero-sub">Chronos est une agence de voyage temporel de luxe. Nous organisons des départs immersifs vers Paris 1889, le Crétacé et Florence 1504, avec un conseiller historique et un retour sécurisé.</p>
     <div class="hero-actions">
-      <button class="btn-primary">Begin Your Voyage <span>→</span></button>
-      <button class="btn-ghost">Watch the Film</button>
+      <a class="btn-primary" href="#planner">Commencer le voyage <span>→</span></a>
+      <a class="btn-ghost" href="#destinations">Voir les destinations</a>
     </div>
   </div>
 
   <div class="hero-meta">
     <div class="stamp">
-      <span>Anchor Status</span>
+      <span>Statut d'ancrage</span>
       <strong>Stable · 99.984%</strong>
     </div>
     <div class="scroll-cue">
-      <span>SCROLL</span>
+      <span>DÉFILER</span>
       <div class="line"></div>
     </div>
     <div class="stamp" style="text-align:right;">
-      <span>Next Departure</span>
-      <strong>17 Mar 2087 · Bay IX</strong>
+      <span>Prochain départ</span>
+      <strong>17 Mar 2087 · Baie IX</strong>
     </div>
   </div>
 </header>
@@ -600,27 +640,27 @@ section { position: relative; padding: 140px 48px; }
 <section class="destinations" id="destinations">
   <div class="section-head reveal">
     <div>
-      <div class="section-eyebrow">III Featured Voyages</div>
-      <h2 class="section-title">Seventeen moments<br>across <em>four millennia.</em></h2>
+      <div class="section-eyebrow">III Voyages Signature</div>
+      <h2 class="section-title">Trois époques.<br>Une expérience <em>sur mesure.</em></h2>
     </div>
-    <p class="section-lede">Each destination is hand-curated for historical resonance, sensory richness, and absolute safety of return. Anchors are recalibrated after every voyage.</p>
+    <p class="section-lede">Chaque destination reprend les visuels du premier projet TimeTravel Agency et garde une navigation simple, immersive et responsive.</p>
   </div>
 
   <div class="dest-grid">
     <article class="dest-card reveal">
       <div class="dest-image-wrap">
-        <div class="dest-image"><div class="img-belle"></div></div>
+        <div class="dest-image"><video class="dest-media" autoplay muted loop playsinline preload="metadata"><source src="img/Paris_Eiffel_Tower_Video.mp4" type="video/mp4"></video></div>
         <div class="dest-image-overlay"></div>
         <div class="dest-tag">Voyage 04</div>
-        <div class="dest-status"><span class="dot"></span>Anchors Open</div>
+        <div class="dest-status"><span class="dot"></span>Ancres ouvertes</div>
       </div>
       <div class="dest-body">
         <div class="dest-coord"><span>48.8566°N · 2.3522°E</span><span>Δt −198y</span></div>
         <h3 class="dest-name">Paris, <em>La Belle Époque</em></h3>
-        <p class="dest-era">Spring 1889 · 14 days</p>
-        <p class="dest-desc">Arrive the morning the Eiffel Tower opens. Champagne at Maxim's, a private box at the Opéra Garnier, and a sitting with Sarah Bernhardt arranged in advance.</p>
+        <p class="dest-era">Printemps 1889 · 14 jours</p>
+        <p class="dest-desc">Découvrez la Belle Époque au moment de l'Exposition Universelle : Tour Eiffel, Opéra Garnier, cafés mondains et élégance parisienne.</p>
         <div class="dest-foot">
-          <div class="dest-price"><small>From</small>$2.4M</div>
+          <div class="dest-price"><small>Dès</small>2,4M€</div>
           <div class="dest-arrow"><svg viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></div>
         </div>
       </div>
@@ -628,18 +668,18 @@ section { position: relative; padding: 140px 48px; }
 
     <article class="dest-card reveal">
       <div class="dest-image-wrap">
-        <div class="dest-image"><div class="img-mars"></div></div>
+        <div class="dest-image"><video class="dest-media" autoplay muted loop playsinline preload="metadata"><source src="img/Prehistoric_Triceratops_Cinematic_Video.mp4" type="video/mp4"></video></div>
         <div class="dest-image-overlay"></div>
         <div class="dest-tag">Voyage 11</div>
-        <div class="dest-status"><span class="dot"></span>3 Anchors Left</div>
+        <div class="dest-status"><span class="dot"></span>3 Ancres libres</div>
       </div>
       <div class="dest-body">
-        <div class="dest-coord"><span>4.5°S · 137.4°E · Mars</span><span>Δt +44y</span></div>
-        <h3 class="dest-name">The <em>First Footstep</em></h3>
-        <p class="dest-era">November 2131 · 9 days</p>
-        <p class="dest-desc">Witness, from an authorized overlook 1.2 km from Gale Crater, the Sōl Mission's first crewed descent. Audio-isolated. Photographically restricted. Unforgettable.</p>
+        <div class="dest-coord"><span>Crétacé supérieur</span><span>Δt −65M</span></div>
+        <h3 class="dest-name">Crétacé, <em>Terre primitive</em></h3>
+        <p class="dest-era">-65 millions d'années · 9 jours</p>
+        <p class="dest-desc">Observez les dinosaures depuis une zone sécurisée : jungle préhistorique, faune monumentale et protocole d'ancrage renforcé.</p>
         <div class="dest-foot">
-          <div class="dest-price"><small>From</small>$6.8M</div>
+          <div class="dest-price"><small>Dès</small>6,8M€</div>
           <div class="dest-arrow"><svg viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></div>
         </div>
       </div>
@@ -647,18 +687,18 @@ section { position: relative; padding: 140px 48px; }
 
     <article class="dest-card reveal">
       <div class="dest-image-wrap">
-        <div class="dest-image"><div class="img-ancient"></div></div>
+        <div class="dest-image"><video class="dest-media" autoplay muted loop playsinline preload="metadata"><source src="img/Gen-4%20Turbo%20Scenic%20view%20of%20Florence%20rooftops,%20cinematic%20travel%20video,%20smooth%20camera%20movement,%20professional%20cinematography,%20gentle%20pan%20right%20across%20the%20skyline%20and%20the%20Duomo,%20golden%20hour%20lighting,%20eleg.mp4" type="video/mp4"></video></div>
         <div class="dest-image-overlay"></div>
         <div class="dest-tag">Voyage 02</div>
-        <div class="dest-status"><span class="dot"></span>Anchors Open</div>
+        <div class="dest-status"><span class="dot"></span>Ancres ouvertes</div>
       </div>
       <div class="dest-body">
-        <div class="dest-coord"><span>29.9792°N · 31.1342°E</span><span>Δt −4,635y</span></div>
-        <h3 class="dest-name">Giza, <em>Under Stars</em></h3>
-        <p class="dest-era">Inundation Season, 2570 BCE · 21 days</p>
-        <p class="dest-desc">A privately staffed Nile dahabiya, an evening with the high priest of Ra, and supervised access to the unfinished King's Chamber during the limestone capstone procession.</p>
+        <div class="dest-coord"><span>43.7696°N · 11.2558°E</span><span>Δt −583y</span></div>
+        <h3 class="dest-name">Florence, <em>Renaissance 1504</em></h3>
+        <p class="dest-era">Automne 1504 · 12 jours</p>
+        <p class="dest-desc">Entrez dans la Renaissance : ateliers d'artistes, architecture florentine, premières présentations du David et vie culturelle italienne.</p>
         <div class="dest-foot">
-          <div class="dest-price"><small>From</small>$3.9M</div>
+          <div class="dest-price"><small>Dès</small>3,9M€</div>
           <div class="dest-arrow"><svg viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></div>
         </div>
       </div>
@@ -666,63 +706,128 @@ section { position: relative; padding: 140px 48px; }
   </div>
 </section>
 
-<section class="experience">
+<section class="experience" id="voyage">
   <div class="section-head reveal">
     <div>
-      <div class="section-eyebrow">The Voyage</div>
-      <h2 class="section-title">Four phases.<br>One <em>unforgettable</em> arc.</h2>
+      <div class="section-eyebrow">Le Voyage</div>
+      <h2 class="section-title">Quatre phases.<br>Une trajectoire <em>maîtrisée.</em></h2>
     </div>
-    <p class="section-lede">From the first consultation to your debrief, every moment is choreographed. The voyage itself is the smallest part of what we do.</p>
+    <p class="section-lede">De la recommandation à la préparation, chaque étape simplifie la réservation et sécurise l'expérience temporelle.</p>
   </div>
 
   <div class="exp-grid reveal">
     <div class="exp-step">
       <div class="exp-icon">I</div>
-      <div class="exp-num">01 / CONSULT</div>
-      <h3 class="exp-title">The Atelier</h3>
-      <p class="exp-desc">Three evenings with your historian. We translate your interior life into a calibrated destination — no two voyages are alike.</p>
+      <div class="exp-num">01 / CONSEIL</div>
+      <h3 class="exp-title">L'Atelier</h3>
+      <p class="exp-desc">Le visiteur découvre l'agence et choisit une destination selon ses envies : culture, aventure ou art.</p>
     </div>
     <div class="exp-step">
       <div class="exp-icon">II</div>
-      <div class="exp-num">02 / PREPARE</div>
-      <h3 class="exp-title">Acclimation</h3>
-      <p class="exp-desc">Period language, custom wardrobe, ten weeks of physiological tuning at our Lake Geneva residence.</p>
+      <div class="exp-num">02 / PRÉPARER</div>
+      <h3 class="exp-title">Acclimatation</h3>
+      <p class="exp-desc">La page présente les contraintes de chaque époque, les dates, les prix et les recommandations de sécurité.</p>
     </div>
     <div class="exp-step">
       <div class="exp-icon">III</div>
-      <div class="exp-num">03 / DEPART</div>
-      <h3 class="exp-title">The Bay</h3>
-      <p class="exp-desc">A 19-second transit from our Mont-Blanc facility. You arrive rested, anchored, and accompanied.</p>
+      <div class="exp-num">03 / DÉPART</div>
+      <h3 class="exp-title">La Baie</h3>
+      <p class="exp-desc">Le CTA dirige vers la sélection du voyage et le chatbot peut guider l'utilisateur avant réservation.</p>
     </div>
     <div class="exp-step">
       <div class="exp-icon">IV</div>
-      <div class="exp-num">04 / RETURN</div>
+      <div class="exp-num">04 / RETOUR</div>
       <h3 class="exp-title">Debrief</h3>
-      <p class="exp-desc">Seven days at the residence with a private psychoanalyst and an archivist who builds your personal voyage portfolio.</p>
+      <p class="exp-desc">Le parcours reste réversible : FAQ automatisée, informations claires et accompagnement après le voyage.</p>
     </div>
   </div>
 </section>
 
-<section class="testimony">
-  <div class="testimony-inner reveal">
-    <blockquote>I expected a holiday. I returned with a different relationship to my own century.</blockquote>
-    <div class="testimony-author"><strong>M.D.</strong> &nbsp;·&nbsp; Voyage 07 · Florence, 1502</div>
+<section class="planner" id="planner">
+  <div class="section-head reveal">
+    <div>
+      <div class="section-eyebrow">Personnalisation</div>
+      <h2 class="section-title">Choisir et réserver<br>un départ <em>cohérent.</em></h2>
+    </div>
+    <p class="section-lede">Cette section couvre l'exercice optionnel : recommandation automatique selon les préférences et validation simple d'une demande de voyage.</p>
+  </div>
+
+  <div class="planner-grid reveal">
+    <div class="planner-panel">
+      <h3>Quiz destination</h3>
+      <div class="planner-field">
+        <label for="pref-experience">Expérience</label>
+        <select id="pref-experience">
+          <option value="culture">Culturelle et artistique</option>
+          <option value="nature">Aventure et nature</option>
+          <option value="elegance">Élégance et raffinement</option>
+        </select>
+      </div>
+      <div class="planner-field">
+        <label for="pref-period">Période</label>
+        <select id="pref-period">
+          <option value="modern">XIXe siècle</option>
+          <option value="origins">Temps anciens</option>
+          <option value="renaissance">Renaissance</option>
+        </select>
+      </div>
+      <div class="planner-field">
+        <label for="pref-activity">Activité</label>
+        <select id="pref-activity">
+          <option value="monuments">Visiter des monuments</option>
+          <option value="wildlife">Observer la faune</option>
+          <option value="museums">Explorer les arts</option>
+        </select>
+      </div>
+      <button class="btn-primary" type="button" id="recommend-btn">Recommander <span>→</span></button>
+      <p class="planner-result" id="recommend-result">Sélectionnez vos préférences puis lancez la recommandation.</p>
+    </div>
+
+    <div class="planner-panel">
+      <h3>Demande de réservation</h3>
+      <div class="planner-field">
+        <label for="booking-destination">Destination</label>
+        <select id="booking-destination">
+          <option value="">Choisir une destination</option>
+          <option value="Paris 1889">Paris 1889</option>
+          <option value="Crétacé">Crétacé</option>
+          <option value="Florence 1504">Florence 1504</option>
+        </select>
+      </div>
+      <div class="planner-field">
+        <label for="booking-date">Date souhaitée</label>
+        <input id="booking-date" type="date">
+      </div>
+      <div class="planner-field">
+        <label for="booking-travelers">Voyageurs</label>
+        <input id="booking-travelers" type="number" min="1" max="4" value="1">
+      </div>
+      <button class="btn-primary" type="button" id="booking-btn">Valider <span>→</span></button>
+      <p class="planner-result" id="booking-result">La validation vérifie la destination, la date et le nombre de voyageurs.</p>
+    </div>
   </div>
 </section>
 
-<footer class="foot">
+<section class="testimony" id="journal">
+  <div class="testimony-inner reveal">
+    <blockquote>Je pensais réserver un voyage. J'ai choisi une époque.</blockquote>
+    <div class="testimony-author"><strong>M.D.</strong> &nbsp;·&nbsp; Voyage 07 · Florence, 1504</div>
+  </div>
+</section>
+
+<footer class="foot" id="atelier">
   <div class="foot-grid">
     <div class="foot-brand">
       <span class="wordmark">CHRONOS</span>
-      <p>Private temporal travel, by appointment only. Chronos S.A. is regulated under the 2081 Geneva Accord on Anchored Voyage. All journeys are fully reversible.</p>
+      <p>Agence fictive de voyage temporel créée pour le projet TimeTravel Agency. Interface immersive, destinations historiques et assistant conversationnel intégré.</p>
     </div>
-    <div>
+    <div id="membership">
       <h4>Atelier</h4>
-      <ul><li><a>Destinations</a></li><li><a>The Voyage</a></li><li><a>Atelier Visits</a></li><li><a>Journal</a></li></ul>
+      <ul><li><a>Destinations</a></li><li><a>Le Voyage</a></li><li><a>Visite atelier</a></li><li><a>Journal</a></li></ul>
     </div>
     <div>
-      <h4>Membership</h4>
-      <ul><li><a>Apply</a></li><li><a>Patrons' Society</a></li><li><a>Referrals</a></li><li><a>Concierge</a></li></ul>
+      <h4>Membres</h4>
+      <ul><li><a>Candidater</a></li><li><a>Club privé</a></li><li><a>Parrainage</a></li><li><a>Concierge</a></li></ul>
     </div>
     <div>
       <h4>Contact</h4>
@@ -731,8 +836,8 @@ section { position: relative; padding: 140px 48px; }
   </div>
   <div class="foot-bottom">
     <span>© 2087 Chronos S.A.</span>
-    <span>Anchored · Reversible · Discreet</span>
-    <span>Privacy · Terms · Anchor Disclosures</span>
+    <span>Ancré · Réversible · Discret</span>
+    <span>Confidentialité · Conditions · Sécurité</span>
   </div>
 </footer>
 
@@ -825,6 +930,58 @@ section { position: relative; padding: 140px 48px; }
     entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); });
   }, { threshold: 0.12 });
   document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+  window.addEventListener('load', () => {
+    if (window.location.hash && window.location.hash !== '#chat') {
+      setTimeout(() => document.querySelector(window.location.hash)?.scrollIntoView(), 120);
+    }
+  });
+})();
+
+(function() {
+  const recommendBtn = document.getElementById('recommend-btn');
+  const recommendResult = document.getElementById('recommend-result');
+  const bookingBtn = document.getElementById('booking-btn');
+  const bookingResult = document.getElementById('booking-result');
+
+  function text(id) {
+    return document.getElementById(id).value;
+  }
+
+  recommendBtn?.addEventListener('click', () => {
+    const scores = { paris: 0, cretace: 0, florence: 0 };
+    const experience = text('pref-experience');
+    const period = text('pref-period');
+    const activity = text('pref-activity');
+
+    if (experience === 'nature') scores.cretace += 2;
+    if (experience === 'culture') scores.florence += 2;
+    if (experience === 'elegance') scores.paris += 2;
+    if (period === 'origins') scores.cretace += 2;
+    if (period === 'renaissance') scores.florence += 2;
+    if (period === 'modern') scores.paris += 2;
+    if (activity === 'wildlife') scores.cretace += 2;
+    if (activity === 'museums') scores.florence += 2;
+    if (activity === 'monuments') scores.paris += 2;
+
+    const best = Object.entries(scores).sort((a, b) => b[1] - a[1])[0][0];
+    const copy = {
+      paris: '<strong>Paris 1889</strong> : meilleur choix pour l elegance, les monuments et une premiere immersion historique stable.',
+      cretace: '<strong>Cretace</strong> : meilleur choix pour l aventure, la nature primitive et l observation de la faune.',
+      florence: '<strong>Florence 1504</strong> : meilleur choix pour l art, la Renaissance et l architecture.'
+    };
+    recommendResult.innerHTML = copy[best];
+  });
+
+  bookingBtn?.addEventListener('click', () => {
+    const destination = text('booking-destination');
+    const date = text('booking-date');
+    const travelers = Number(text('booking-travelers'));
+    if (!destination || !date || travelers < 1 || travelers > 4) {
+      bookingResult.innerHTML = '<strong>Validation impossible.</strong> Choisissez une destination, une date et 1 a 4 voyageurs.';
+      return;
+    }
+    bookingResult.innerHTML = `<strong>Demande prete.</strong> ${destination}, ${travelers} voyageur(s), depart souhaite le ${date}. Confirmation finale par un conseiller Chronos.`;
+  });
 })();
 </script>
 
@@ -832,39 +989,16 @@ section { position: relative; padding: 140px 48px; }
 const { useState, useEffect, useRef } = React;
 
 const QUICK_PROMPTS = [
-  "Where should a first-time traveler begin?",
-  "How does the quantum anchor work?",
-  "Tell me about Mars in 2131",
-  "What is membership?"
+  "Quelle destination choisir ?",
+  "Comment fonctionne l'ancrage ?",
+  "Parle-moi du Crétacé",
+  "Quels sont les prix ?"
 ];
 
-function offlineReply(q) {
-  const s = q.toLowerCase();
-  if (s.includes('anchor') || s.includes('safe') || s.includes('return') || s.includes('how does'))
-    return "The quantum anchor is, in essence, a tether. Your present moment is *held open* — calibrated to a femtosecond — so the past you visit cannot close behind you. Recovery rate over seventeen voyages remains 100%.";
-  if (s.includes('mars') || s.includes('2131') || s.includes('first foot'))
-    return "*The First Footstep* is our most requested forward voyage. You observe the Sōl descent from an authorized overlook — silent, audio-isolated, photographically restricted. Nine days. From $6.8M.";
-  if (s.includes('paris') || s.includes('belle') || s.includes('1889'))
-    return "Paris in the spring of 1889 is *incomparable.* The Tower opens, Maxim's is new, and an evening with Sarah Bernhardt can be arranged. Fourteen days. From $2.4M.";
-  if (s.includes('giza') || s.includes('egypt') || s.includes('pyramid') || s.includes('2570'))
-    return "Giza under stars is our oldest destination — 2570 BCE, inundation season. A private dahabiya on the Nile, and supervised access to the unfinished King's Chamber. Twenty-one days. From $3.9M.";
-  if (s.includes('member') || s.includes('apply') || s.includes('join'))
-    return "Membership is by invitation. We accept eleven new patrons each year. Begin with a Manifest request — three evenings with one of our historians, in Geneva or by anchor-link, *no obligation.*";
-  if (s.includes('first') || s.includes('begin') || s.includes('recommend') || s.includes('start'))
-    return "For a first voyage I almost always suggest *Paris, 1889.* Familiar enough to feel like a homecoming, strange enough to never forget. The anchor calibration is the most stable in our catalogue.";
-  if (s.includes('price') || s.includes('cost') || s.includes('how much'))
-    return "Voyages begin at $2.4M and rise with the *temporal distance.* Each price includes ten weeks of acclimation, the voyage itself, and a seven-day debrief at our Lake Geneva residence.";
-  if (s.includes('time') || s.includes('long') || s.includes('duration'))
-    return "From signed Manifest to return debrief — typically *fourteen weeks.* The voyage itself is the smallest part. The preparation is the journey.";
-  if (s.includes('hello') || s.includes('hi') || s.includes('hey'))
-    return "A pleasure. I can speak about our seventeen destinations, the anchor, membership, or simply *imagine a voyage with you.* Where shall we begin?";
-  return "A thoughtful question. Allow me to *consult the archive* — would you like to speak with one of our historians directly? I can arrange a Manifest evening this week.";
-}
-
 function ChronosBot() {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(window.location.hash === '#chat');
   const [messages, setMessages] = useState([
-    { role: 'ai', content: "Good evening. I am *Lumen*, your concierge at Chronos. I can help you imagine a voyage, or answer anything about our seventeen destinations. Where shall we begin?" }
+    { role: 'ai', content: "Bonjour. Je suis *Lumen*, assistant virtuel de Chronos. Je conseille les voyageurs sur Paris 1889, le Crétacé et Florence 1504. Quelle époque vous attire ?" }
   ]);
   const [input, setInput] = useState("");
   const [sending, setSending] = useState(false);
@@ -887,11 +1021,22 @@ function ChronosBot() {
     setMessages(next);
     setSending(true);
     try {
-      await new Promise(r => setTimeout(r, 700 + Math.random() * 600));
-      const reply = offlineReply(content);
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          messages: next.map(m => ({
+            role: m.role === 'ai' ? 'assistant' : 'user',
+            content: m.content
+          }))
+        })
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(data.error || "API IA indisponible");
+      const reply = data.reply || "Je n'ai pas reçu de réponse exploitable.";
       setMessages(m => [...m, { role: 'ai', content: reply }]);
     } catch (e) {
-      setMessages(m => [...m, { role: 'ai', content: "Forgive me — our temporal link has flickered. *Try again in a moment.*" }]);
+      setMessages(m => [...m, { role: 'ai', content: `Configuration IA en cours : ${e.message}` }]);
     } finally {
       setSending(false);
     }
@@ -907,7 +1052,7 @@ function ChronosBot() {
 
   if (!open) {
     return (
-      <button className="bot-launcher" onClick={() => setOpen(true)} aria-label="Open concierge">
+      <button className="bot-launcher" onClick={() => setOpen(true)} aria-label="Ouvrir le concierge">
         <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4">
           <circle cx="12" cy="12" r="9" />
           <path d="M12 7v5l3 2" strokeLinecap="round" />
@@ -920,14 +1065,14 @@ function ChronosBot() {
   const showChips = messages.length <= 1;
 
   return (
-    <div className="bot-window" role="dialog" aria-label="Chronos concierge">
+    <div className="bot-window" role="dialog" aria-label="Concierge Chronos">
       <div className="bot-head">
         <div className="bot-avatar"><div className="core"></div></div>
         <div className="bot-head-text">
           <h3>Lumen</h3>
-          <p>Concierge · Online</p>
+          <p>Concierge · En ligne</p>
         </div>
-        <button className="bot-close" onClick={() => setOpen(false)} aria-label="Close">×</button>
+        <button className="bot-close" onClick={() => setOpen(false)} aria-label="Fermer">×</button>
       </div>
 
       <div className="bot-body" ref={bodyRef}>
@@ -955,19 +1100,19 @@ function ChronosBot() {
           <input
             ref={inputRef}
             className="bot-input"
-            placeholder="Ask Lumen…"
+            placeholder="Posez une question à Lumen..."
             value={input}
             onChange={e => setInput(e.target.value)}
             onKeyDown={e => { if (e.key === 'Enter') send(); }}
             disabled={sending}
           />
-          <button className="bot-send" onClick={() => send()} disabled={sending || !input.trim()} aria-label="Send">
+          <button className="bot-send" onClick={() => send()} disabled={sending || !input.trim()} aria-label="Envoyer">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M5 12h14m-6-6 6 6-6 6" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </button>
         </div>
-        <div className="bot-disclaimer">Replies are AI-generated · For illustrative pleasure</div>
+        <div className="bot-disclaimer">Réponses générées via OpenRouter</div>
       </div>
     </div>
   );
